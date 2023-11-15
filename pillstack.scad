@@ -202,41 +202,37 @@ module base(
     echo("thread minor diameter", thread_minor_diameter);
     echo("inner diameter", inner_diameter);
 
-    translate([0, 0, DEBUG_explode ? 5 : 0])
-    translate([0, 0, outer_height - mating_height])
-        base_male_threads(
-            thread_major_diameter=thread_major_diameter,
-            inner_diameter=inner_diameter,
-            height=mating_height,
-            pitch=pitch
-        );
-
-    // body
-    core_height = outer_height - 2 * mating_height - extra_female_mating_height; // includes bottom wall
-    echo("core height", core_height);
-    /*
-    translate([0, 0, mating_height + extra_female_mating_height])
-        difference() {
-            cylinder(
-                d=outer_diameter,
-                h=core_height
+    if (outer_height > 0) {
+        translate([0, 0, DEBUG_explode ? 5 : 0])
+        translate([0, 0, outer_height - mating_height])
+            base_male_threads(
+                thread_major_diameter=thread_major_diameter,
+                inner_diameter=inner_diameter,
+                height=mating_height,
+                pitch=pitch
             );
-            translate([0, 0, wall])
-                cylinder(
-                    d=inner_diameter,
-                    h=core_height - wall + 1
-                );
+
+        // body
+        core_height = outer_height - 2 * mating_height - extra_female_mating_height; // includes bottom wall
+        echo("core height", core_height);
+        cupje(
+            d=outer_diameter,
+            d_inner=inner_diameter,
+            d_conn=inner_diameter - 2 * get_slop(),
+            d_base=inner_diameter - 2 * get_slop() - 2 * wall,
+            wall=wall,
+            h=core_height,
+            h_base=mating_height + extra_female_mating_height
+        );
+    } else {
+        translate([0, 0, mating_height + extra_female_mating_height]) {
+            cylinder(
+                d1=outer_diameter,
+                d2=outer_diameter - 2 * wall,
+                h=wall
+            );
         }
-    */
-    cupje(
-        d=outer_diameter,
-        d_inner=inner_diameter,
-        d_conn=inner_diameter - 2 * get_slop(),
-        d_base=inner_diameter - 2 * get_slop() - 2 * wall,
-        wall=wall,
-        h=core_height,
-        h_base=mating_height + extra_female_mating_height
-    );
+    }
 
     translate([0, 0, DEBUG_explode ? -5 : 0])
     base_female_threads(
@@ -308,6 +304,7 @@ module all() {
         new_base(OUTER_HEIGHT_EMPTY);
         new_base(OUTER_HEIGHT_SMALL);
         new_base(OUTER_HEIGHT_LARGE);
+        rotate([180, 0, 0]) new_base(0);
     }
 }
 
