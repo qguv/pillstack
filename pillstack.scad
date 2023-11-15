@@ -58,7 +58,7 @@ module base_male_threads(
     thread_major_diameter,
     inner_diameter,
     height,
-    pitch
+    pitch,
 ) {
     rotate([0, 0, 180]) {
         difference() {
@@ -97,7 +97,7 @@ module base_female_threads(
 }
 
 module test_sanity_print() {
-    base(outer_height=25 - 14.5);
+    orig_base_remake(DEBUG_squat=true);
 }
 
 module test_fit(
@@ -129,8 +129,11 @@ module test_fit(
     }
 }
 
-function d_min(d_maj, p) =
-    d_maj - (5 * sqrt(3) / 8) * p;
+function get_h(p) =
+    p * sqrt(3) / 2;
+
+function get_d_min(d_maj, p) =
+    d_maj - 2 * (5 / 8) * get_h(p);
 
 module cyl_V(d, d_conn, d_base, h, h_base) {
 
@@ -179,21 +182,33 @@ module cupje(
     }
 }
 
+module orig_base_remake(virtual_scale=1, DEBUG_squat=false) {
+    base(
+        outer_diameter=46,
+        outer_height=25 - (DEBUG_squat ? 14.5 : 0),
+        mating_height=3.5 * virtual_scale,
+        pitch=3 * virtual_scale,
+        extra_female_mating_height=1.5,
+        extra_outer_wall=2.3197,
+        extra_inner_wall=0.0565024
+    );
+}
+
 module base(
-    outer_diameter=46,
-    outer_height=25,
-    mating_height=3.5,
+    outer_diameter,
+    outer_height,
+    mating_height,
+    pitch,
     wall=1,
-    pitch=3,
-    extra_female_mating_height=1.5,
-    extra_outer_wall=2.3197,
-    extra_inner_wall=0.0565024
+    extra_female_mating_height=0.5,
+    extra_outer_wall=0,
+    extra_inner_wall=0,
 ) {
     thread_major_diameter = outer_diameter - 2 * wall - 2 * extra_outer_wall;
     inner_height = outer_height - 2 * mating_height - extra_female_mating_height - wall;
     echo("inner height", inner_height);
 
-    thread_minor_diameter = d_min(thread_major_diameter, pitch);
+    thread_minor_diameter = get_d_min(thread_major_diameter * 2, pitch) / 2;
     inner_diameter = thread_minor_diameter - 2 * wall - 2 * extra_inner_wall;
     echo("thread major diameter", thread_major_diameter);
     echo("thread minor diameter", thread_minor_diameter);
@@ -256,32 +271,6 @@ module xz_slice() {
                 children();
 }
 
-module all() {
-    base();
-}
-
-$fn=90;
-$slop = 0.2;
-DEBUG_explode = false;
-
-//orig_base();
-//test_fit();
-//test_sanity_print();
-//xz_slice() // DEBUG
-base();
-/*
-base(
-    outer_diameter=23,
-    outer_height=33 - (24.5 - 20.5),
-    mating_height=3.5,
-    wall=1,
-    pitch=3,
-    extra_female_mating_height=0.5,
-    extra_outer_wall=0,
-    extra_inner_wall=0
-);
-*/
-
 module techno_visuals() {
     cupje(
         d=20,
@@ -291,3 +280,27 @@ module techno_visuals() {
         wall=1
     );
 }
+
+module compare_thread_scaling() {
+    orig_base_remake(0.7174);
+    translate([0, 0, 10])
+        scale([1, 1, 1] * 0.7174)
+            orig_base_remake();
+}
+
+module prep_base(
+    DEBUG_squat=false,
+) {
+    base(
+        outer_diameter=23,
+        outer_height=33 - (24.5 - 20.5) - (DEBUG_squat ? 22 : 0),
+        mating_height=2.5, // 3.5 * 0.7174
+        pitch=2 // 3 * 0.7174
+    );
+}
+
+$fn=90;
+$slop = 0.2;
+DEBUG_explode = false;
+
+prep_base(DEBUG_squat=true);
