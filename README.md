@@ -8,7 +8,7 @@ changes from the original:
 
 ## building
 
-run `ninja` or `openscad -o pillstack.3mf pillstack.scad`
+once you have the submodules (`git submodule update --init`), run `ninja` or `openscad -o pillstack.3mf pillstack.scad`
 
 ## animation
 
