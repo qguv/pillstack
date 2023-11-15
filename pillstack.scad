@@ -5,6 +5,8 @@
 // animation: spin
 //$vpr = [$vpr[0], 0, 360 * $t];
 
+scale_factor = 33 / 46;
+
 module orig_base() {
     import("lib/base.stl");
 }
@@ -56,4 +58,4 @@ module all() {
     translate([sep, 3*sep, 0]) cap();
 }
 
-all();
+scale([scale_factor, scale_factor, scale_factor]) all();
