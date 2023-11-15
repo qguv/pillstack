@@ -142,30 +142,40 @@ module cyl_V(d, d_conn, d_base, h, h_base) {
     cylinder(d2=d_conn, d1=d_base, h=h_base);
 }
 
-module cupje(d, d_conn, d_base, h, h_base, wall) {
+module cupje(
+    d,
+    d_inner,
+    h, // includes bottom wall
+    d_conn,
+    h_base, // includes base wall
+    d_base,
+    wall
+) {
     difference() {
 
-        d_inner = d - 2 * wall;
-        d_conn_inner = d_conn - (wall * (d_conn - d_base) / (2 * h_base));
-        d_base_inner = d_base - d_conn + d_conn_inner;
+        base_slope = atan2((d_conn - d_base) / 2, h_base);
+        echo("base slope", base_slope);
+        outer_slope = (base_slope + 90) / 2;
+        d_inner_diff = 1 / (tan(outer_slope) * wall);
+        d_base_inner = d_base - 2 * d_inner_diff;
+        h_taper = ((d_inner - d_base_inner) / 2) / tan(base_slope);
 
         // outer
         cyl_V(
             d=d,
-            d_conn=d_conn,
-            d_base=d_base,
             h=h,
-            h_base=h_base - wall
+            d_conn=d_conn,
+            h_base=h_base,
+            d_base=d_base
         );
 
-        // inner
+        // inner taper
         translate([0, 0, wall])
-            cyl_V(
-                d=d_inner,
-                d_base=d_base_inner,
-                h=h - wall,
-                h_base=h_base
-            );
+            cylinder(d1=d_base_inner, d2=d_inner, h=h_taper);
+
+        // inner
+        translate([0, 0, wall + h_taper])
+            cylinder(d=d_inner, h=h + h_base - wall - h_taper + 1);
     }
 }
 
@@ -199,7 +209,7 @@ module base(
         );
 
     // body
-    core_height = outer_height - 2 * mating_height - extra_female_mating_height;
+    core_height = outer_height - 2 * mating_height - extra_female_mating_height; // includes bottom wall
     echo("core height", core_height);
     /*
     translate([0, 0, mating_height + extra_female_mating_height])
@@ -217,11 +227,12 @@ module base(
     */
     cupje(
         d=outer_diameter,
-        d_conn=outer_diameter * 2 / 3,
-        d_base=outer_diameter / 3,
+        d_inner=inner_diameter,
+        d_conn=inner_diameter - 2 * $slop,
+        d_base=inner_diameter - 2 * $slop - 2 * wall,
         wall=wall,
         h=core_height,
-        h_base=mating_height + extra_female_mating_height + wall
+        h_base=mating_height + extra_female_mating_height
     );
 
     translate([0, 0, DEBUG_explode ? -5 : 0])
@@ -251,13 +262,12 @@ module all() {
 
 $fn=90;
 $slop = 0.1;
-
-DEBUG_explode = true;
+DEBUG_explode = false;
 
 //orig_base();
 //test_fit();
 //test_sanity_print();
-xz_slice() // DEBUG
+//xz_slice() // DEBUG
 base();
 /*
 base(
