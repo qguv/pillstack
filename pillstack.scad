@@ -182,25 +182,13 @@ module cupje(
     }
 }
 
-module orig_base_remake(virtual_scale=1, DEBUG_squat=false) {
-    base(
-        outer_diameter=46,
-        outer_height=25 - (DEBUG_squat ? 14.5 : 0),
-        mating_height=3.5 * virtual_scale,
-        pitch=3 * virtual_scale,
-        extra_female_mating_height=1.5,
-        extra_outer_wall=2.3197,
-        extra_inner_wall=0.0565024
-    );
-}
-
 module base(
     outer_diameter,
     outer_height,
     mating_height,
     pitch,
     wall=1,
-    extra_female_mating_height=0.5,
+    extra_female_mating_height=1,
     extra_outer_wall=0,
     extra_inner_wall=0,
 ) {
@@ -286,6 +274,18 @@ module compare_thread_scaling() {
     translate([0, 0, 10])
         scale([1, 1, 1] * 0.7174)
             orig_base_remake();
+}
+
+module orig_base_remake(virtual_scale=1, DEBUG_squat=false) {
+    base(
+        outer_diameter=46,
+        outer_height=25 - (DEBUG_squat ? 14.5 : 0),
+        mating_height=3.5 * virtual_scale,
+        pitch=3 * virtual_scale,
+        extra_female_mating_height=1.5,
+        extra_outer_wall=2.3197,
+        extra_inner_wall=0.0565024
+    );
 }
 
 module prep_base(
