@@ -1,3 +1,10 @@
+// animation: fix camera in place
+//$vpr = [$vpr[0], 0, $vpr[2]];
+//$vpt = [0, 0, 0];
+
+// animation: spin
+//$vpr = [$vpr[0], 0, 360 * $t];
+
 module orig_base() {
     rotate([90, 0, 0])
         import("lib/[PLA][v1.0] Stackable_C_Base.3mf");
