@@ -79,10 +79,20 @@ module base_female_threads(
     thread_major_diameter,
     outer_diameter,
     height,
-    pitch
+    pitch,
+    texture=undef,
+    tex_size=undef,
+    tex_scale=undef
 ) {
     intersection() {
-        cylinder(d=outer_diameter, h=height);
+        cyl(
+            d=outer_diameter,
+            h=height,
+            texture=texture,
+            tex_size=tex_size,
+            tex_scale=tex_scale,
+            anchor=BOTTOM
+        );
         threaded_nut(
             nutwidth=outer_diameter+10,
             id=thread_major_diameter,
@@ -135,11 +145,27 @@ function get_h(p) =
 function get_d_min(d_maj, p) =
     d_maj - 2 * (5 / 8) * get_h(p);
 
-module cyl_V(d, d_conn, d_base, h, h_base) {
+module cyl_V(
+    d,
+    d_conn,
+    d_base,
+    h,
+    h_base,
+    texture=undef,
+    tex_size=undef,
+    tex_scale=undef
+) {
 
     // vessel
     translate([0, 0, h_base])
-        cylinder(d=d, h=h);
+        cyl(
+            d=d,
+            h=h,
+            texture=texture,
+            tex_size=tex_size,
+            tex_scale=tex_scale,
+            anchor=BOTTOM
+        );
 
     // base
     cylinder(d2=d_conn, d1=d_base, h=h_base);
@@ -152,7 +178,10 @@ module cupje(
     d_conn,
     h_base, // includes base wall
     d_base,
-    wall
+    wall,
+    texture=undef,
+    tex_size=undef,
+    tex_scale=undef
 ) {
     difference() {
 
@@ -169,7 +198,10 @@ module cupje(
             h=h,
             d_conn=d_conn,
             h_base=h_base,
-            d_base=d_base
+            d_base=d_base,
+            texture=texture,
+            tex_size=tex_size,
+            tex_scale=tex_scale
         );
 
         // inner taper
@@ -191,6 +223,9 @@ module base(
     extra_female_mating_height=1,
     extra_outer_wall=0,
     extra_inner_wall=0,
+    texture=undef,
+    tex_size=[2, 2],
+    tex_scale=0.2
 ) {
     thread_major_diameter = outer_diameter - 2 * wall - 2 * extra_outer_wall;
     inner_height = outer_height - 2 * mating_height - extra_female_mating_height - wall;
@@ -222,14 +257,18 @@ module base(
             d_base=inner_diameter - 2 * get_slop() - 2 * wall,
             wall=wall,
             h=core_height,
-            h_base=mating_height + extra_female_mating_height
+            h_base=mating_height + extra_female_mating_height,
+            texture=texture,
+            tex_scale=tex_scale,
+            tex_size=tex_size
         );
     } else {
         translate([0, 0, mating_height + extra_female_mating_height]) {
-            cylinder(
+            cyl(
                 d1=outer_diameter,
                 d2=outer_diameter - 2 * wall,
-                h=wall
+                h=wall,
+                anchor=BOTTOM
             );
         }
     }
@@ -239,7 +278,10 @@ module base(
         thread_major_diameter=thread_major_diameter,
         outer_diameter=outer_diameter,
         height=mating_height + extra_female_mating_height,
-        pitch=pitch
+        pitch=pitch,
+        texture=texture,
+        tex_scale=tex_scale,
+        tex_size=tex_size
     );
 }
 
@@ -289,6 +331,9 @@ module base_keychain(
     mating_height=2.5,
     wall=1,
     extra_female_mating_height=1,
+    texture=undef,
+    tex_size=[2, 2],
+    tex_scale=0.2
 ) {
     height = outer_diameter / 2;
     translate([
@@ -302,7 +347,12 @@ module base_keychain(
         }
     }
 
-    base(0);
+    base(
+        0,
+        texture=texture,
+        tex_size=tex_size,
+        tex_scale=tex_scale
+    );
 }
 
 OUTER_HEIGHT_LARGE = 23;
@@ -311,6 +361,8 @@ OUTER_HEIGHT_SMALL = 10;
 OUTER_HEIGHT_EMPTY = 7;
 
 module all() {
+    diamonds = texture("diamonds");
+
     xdistribute(30) {
         rotate([180, 0, 0]) base(0);
         base_keychain();
@@ -318,6 +370,13 @@ module all() {
         base(OUTER_HEIGHT_SMALL);
         base(OUTER_HEIGHT_MEDIUM);
         base(OUTER_HEIGHT_LARGE);
+
+        rotate([180, 0, 0]) base(0, texture=diamonds);
+        base_keychain(texture=diamonds);
+        base(OUTER_HEIGHT_EMPTY, texture=diamonds);
+        base(OUTER_HEIGHT_SMALL, texture=diamonds);
+        base(OUTER_HEIGHT_MEDIUM, texture=diamonds);
+        base(OUTER_HEIGHT_LARGE, texture=diamonds);
     }
 }
 
