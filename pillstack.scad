@@ -183,10 +183,10 @@ module cupje(
 }
 
 module base(
-    outer_diameter,
     outer_height,
-    mating_height,
-    pitch,
+    outer_diameter=23,
+    mating_height=2.5,
+    pitch=2,
     wall=1,
     extra_female_mating_height=1,
     extra_outer_wall=0,
@@ -289,24 +289,13 @@ OUTER_HEIGHT_MEDIUM = 18;
 OUTER_HEIGHT_SMALL = 10;
 OUTER_HEIGHT_EMPTY = 7;
 
-module new_base(
-    outer_height
-) {
-    base(
-        outer_diameter=23,
-        outer_height=outer_height,
-        mating_height=2.5, // 3.5 * 0.7174
-        pitch=2 // 3 * 0.7174
-    );
-}
-
 module all() {
     xdistribute(30) {
-        rotate([180, 0, 0]) new_base(0);
-        new_base(OUTER_HEIGHT_EMPTY);
-        new_base(OUTER_HEIGHT_SMALL);
-        new_base(OUTER_HEIGHT_MEDIUM);
-        new_base(OUTER_HEIGHT_LARGE);
+        rotate([180, 0, 0]) base(0);
+        base(OUTER_HEIGHT_EMPTY);
+        base(OUTER_HEIGHT_SMALL);
+        base(OUTER_HEIGHT_MEDIUM);
+        base(OUTER_HEIGHT_LARGE);
     }
 }
 
