@@ -49,8 +49,11 @@ module cap() {
 
 module all() {
     sep = 30;
-    translate([-sep, 0, 0]) base();
-    translate([sep, 0, 0]) cap();
+    translate([sep, sep, 0]) base();
+    translate([sep, -sep, 0]) base();
+    translate([-sep, sep, 0]) base();
+    translate([-sep, -sep, 0]) orig_base();
+    translate([sep, 3*sep, 0]) cap();
 }
 
 all();
