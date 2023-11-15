@@ -1,4 +1,4 @@
 rule openscad
     command = openscad -o $out $in
 
-build pillstack.3mf: openscad pillstack.scad
+build pillstack.3mf: openscad pillstack.scad | lib/base.stl lib/cap.stl
