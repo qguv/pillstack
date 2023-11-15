@@ -284,6 +284,27 @@ module orig_base_remake(virtual_scale=1, DEBUG_squat=false) {
     );
 }
 
+module base_keychain(
+    outer_diameter=23,
+    mating_height=2.5,
+    wall=1,
+    extra_female_mating_height=1,
+) {
+    height = outer_diameter / 2;
+    translate([
+        0,
+        0,
+        mating_height + extra_female_mating_height + wall
+    ]) {
+        difference() {
+            top_half() rotate([0, 90, 0]) sphere(d=height, anchor=CENTER);
+            rotate([0, 90, 0]) cylinder(d=height / 2, h=height * 2, anchor=CENTER);
+        }
+    }
+
+    base(0);
+}
+
 OUTER_HEIGHT_LARGE = 25;
 OUTER_HEIGHT_MEDIUM = 18;
 OUTER_HEIGHT_SMALL = 10;
@@ -292,6 +313,7 @@ OUTER_HEIGHT_EMPTY = 7;
 module all() {
     xdistribute(30) {
         rotate([180, 0, 0]) base(0);
+        base_keychain();
         base(OUTER_HEIGHT_EMPTY);
         base(OUTER_HEIGHT_SMALL);
         base(OUTER_HEIGHT_MEDIUM);
