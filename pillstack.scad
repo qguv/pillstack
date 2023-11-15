@@ -5,14 +5,19 @@
 // animation: spin
 //$vpr = [$vpr[0], 0, 360 * $t];
 
+scale_incoming = 33 / 46;
+scale_outgoing = 1;
+
 module orig_base() {
     rotate([90, 0, 0])
-        import("lib/[PLA][v1.0] Stackable_C_Base.3mf");
+        scale([scale_incoming, scale_incoming, scale_incoming])
+            import("lib/[PLA][v1.0] Stackable_C_Base.3mf");
 }
 
 module orig_cap() {
     rotate([270, 0, 0])
-        import("lib/[PLA][v1.0] Stackable_C_Cap.3mf");
+        scale([scale_incoming, scale_incoming, scale_incoming])
+            import("lib/[PLA][v1.0] Stackable_C_Cap.3mf");
 }
 
 module pips(h, r=22.9, ring_sep=2, n=26) {
