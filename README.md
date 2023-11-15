@@ -1,10 +1,14 @@
 # pillstack
 
-a remix of https://www.printables.com/model/116168-stackable-supplement-containers.
+a from-scratch redesign of https://www.printables.com/model/116168-stackable-supplement-containers in OpenSCAD
 
 changes from the original:
 
-- textured exterior
+- all dimensions are customizable
+- the default set is much more compact
+- optional textured exterior
+- the flat bottom is now hollow to maximize interior space
+- unified interior and exterior wall size
 
 ## building
 
