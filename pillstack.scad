@@ -284,7 +284,8 @@ module orig_base_remake(virtual_scale=1, DEBUG_squat=false) {
     );
 }
 
-OUTER_HEIGHT_LARGE = 29;
+OUTER_HEIGHT_LARGE = 25;
+OUTER_HEIGHT_MEDIUM = 18;
 OUTER_HEIGHT_SMALL = 10;
 OUTER_HEIGHT_EMPTY = 7;
 
@@ -301,10 +302,11 @@ module new_base(
 
 module all() {
     xdistribute(30) {
+        rotate([180, 0, 0]) new_base(0);
         new_base(OUTER_HEIGHT_EMPTY);
         new_base(OUTER_HEIGHT_SMALL);
+        new_base(OUTER_HEIGHT_MEDIUM);
         new_base(OUTER_HEIGHT_LARGE);
-        rotate([180, 0, 0]) new_base(0);
     }
 }
 
