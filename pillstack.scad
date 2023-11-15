@@ -231,8 +231,8 @@ module base(
     cupje(
         d=outer_diameter,
         d_inner=inner_diameter,
-        d_conn=inner_diameter - 2 * $slop,
-        d_base=inner_diameter - 2 * $slop - 2 * wall,
+        d_conn=inner_diameter - 2 * get_slop(),
+        d_base=inner_diameter - 2 * get_slop() - 2 * wall,
         wall=wall,
         h=core_height,
         h_base=mating_height + extra_female_mating_height
@@ -288,19 +288,31 @@ module orig_base_remake(virtual_scale=1, DEBUG_squat=false) {
     );
 }
 
-module prep_base(
-    DEBUG_squat=false,
+OUTER_HEIGHT_LARGE = 29;
+OUTER_HEIGHT_SMALL = 10;
+OUTER_HEIGHT_EMPTY = 7;
+
+module new_base(
+    outer_height
 ) {
     base(
         outer_diameter=23,
-        outer_height=33 - (24.5 - 20.5) - (DEBUG_squat ? 22 : 0),
+        outer_height=outer_height,
         mating_height=2.5, // 3.5 * 0.7174
         pitch=2 // 3 * 0.7174
     );
+}
+
+module all() {
+    xdistribute(30) {
+        new_base(OUTER_HEIGHT_EMPTY);
+        new_base(OUTER_HEIGHT_SMALL);
+        new_base(OUTER_HEIGHT_LARGE);
+    }
 }
 
 $fn=90;
 $slop = 0.2;
 DEBUG_explode = false;
 
-prep_base(DEBUG_squat=true);
+all();
