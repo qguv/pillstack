@@ -261,7 +261,7 @@ module all() {
 }
 
 $fn=90;
-$slop = 0.1;
+$slop = 0.2;
 DEBUG_explode = false;
 
 //orig_base();
