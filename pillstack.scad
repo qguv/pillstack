@@ -364,19 +364,12 @@ module all() {
     diamonds = texture("diamonds");
 
     xdistribute(30) {
-        rotate([180, 0, 0]) base(0);
-        base_keychain();
-        base(OUTER_HEIGHT_EMPTY);
-        base(OUTER_HEIGHT_SMALL);
-        base(OUTER_HEIGHT_MEDIUM);
-        base(OUTER_HEIGHT_LARGE);
-
         rotate([180, 0, 0]) base(0, texture=diamonds);
         base_keychain(texture=diamonds);
         base(OUTER_HEIGHT_EMPTY, texture=diamonds);
-        base(OUTER_HEIGHT_SMALL, texture=diamonds);
-        base(OUTER_HEIGHT_MEDIUM, texture=diamonds);
+        base(OUTER_HEIGHT_EMPTY);
         base(OUTER_HEIGHT_LARGE, texture=diamonds);
+        base(OUTER_HEIGHT_MEDIUM, texture=diamonds);
     }
 }
 
