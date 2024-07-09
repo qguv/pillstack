@@ -8,6 +8,10 @@
 include <BOSL2/std.scad>
 include <BOSL2/threading.scad>
 
+PNG = !is_undef(PNG);
+
+$vpd = 250;
+
 diamonds = texture("diamonds");
 
 // 46d 25h
@@ -372,16 +376,16 @@ module stack(heights=[MEDIUM, LARGE, MINIMUM, MINIMUM, CAP], diameter=23) {
     aheights = accumulate(heights);
 
     // translation to apply to every element
-    base_translation = [0, diameter/2, 0];
+    base_translation = PNG ? [0, 0, 0] : [0, diameter/2, 0];
 
     // translation factor for each element to account for the cumulative *height* of previous elements
-    height_factor = [0, 0, 0];
+    height_factor = PNG ? [0, 0, 1] : [0, 0, 0];
 
     // translation factor for each element to account for the *number* of previous elements (irrespective of height)
-    count_factor = [0, diameter, 0];
+    count_factor = (PNG ? [0, 0, 0] : [0, diameter, 0]);
 
     // add space between the elements
-    padding = [0, 5, 0];
+    padding = (PNG ? [0, 0, -2.5] : [0, 5, 0]);
 
     height_translations = [ for (n = aheights) n * height_factor ];
     count_translations = [ for (i = range(aheights)) i * count_factor ];
@@ -395,7 +399,7 @@ module stack(heights=[MEDIUM, LARGE, MINIMUM, MINIMUM, CAP], diameter=23) {
         texture = i == 2 ? undef : diamonds;
         colorname = i == 2 ? "orange" : undef;
         height = heights[i];
-        flipcap = height == 0;
+        flipcap = !PNG && height == 0;
         start = (
             base_translation
             + height_translations[i]
@@ -413,10 +417,10 @@ module stack(heights=[MEDIUM, LARGE, MINIMUM, MINIMUM, CAP], diameter=23) {
 
 module all() {
     stack();
-    translate([-30, 0, 0]) rotate([180, 0, 0]) base_keychain(texture=diamonds);
+    translate([-30, 0, 0]) rotate([PNG ? 0 : 180, 0, 0]) base_keychain(texture=diamonds);
 }
 
-$fn=$preview ? 20 : 90;
+$fn=(PNG || !$preview) ? 90 : 20;
 $slop = 0.2;
 
 all();

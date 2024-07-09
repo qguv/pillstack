@@ -1,5 +1,9 @@
 rule render3d
     command = openscad -o $out $in
 
+rule render2d
+    command = openscad -D PNG=1 -o $out $in
+
 build pillstack.3mf: render3d pillstack.scad | lib/base.stl lib/cap.stl
 build pillstack.stl: render3d pillstack.scad | lib/base.stl lib/cap.stl
+build pillstack.png: render2d pillstack.scad
