@@ -1,2 +1,3 @@
 .ninja_log
-pillstack.3mf
+*.3mf
+*.stl

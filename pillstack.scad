@@ -8,6 +8,8 @@
 include <BOSL2/std.scad>
 include <BOSL2/threading.scad>
 
+diamonds = texture("diamonds");
+
 // 46d 25h
 module orig_base() {
     rotate([0, 0, 142])
@@ -238,7 +240,6 @@ module base(
     echo("inner diameter", inner_diameter);
 
     if (outer_height > 0) {
-        translate([0, 0, DEBUG_explode ? 5 : 0])
         translate([0, 0, outer_height - mating_height])
             base_male_threads(
                 thread_major_diameter=thread_major_diameter,
@@ -273,7 +274,6 @@ module base(
         }
     }
 
-    translate([0, 0, DEBUG_explode ? -5 : 0])
     base_female_threads(
         thread_major_diameter=thread_major_diameter,
         outer_diameter=outer_diameter,
@@ -355,26 +355,68 @@ module base_keychain(
     );
 }
 
-OUTER_HEIGHT_LARGE = 23;
-OUTER_HEIGHT_MEDIUM = 18;
-OUTER_HEIGHT_SMALL = 10;
-OUTER_HEIGHT_EMPTY = 7;
+function range(x) = is_list(x) ? [0 : len(x)-1] : [0 : x-1];
+
+function accumulate(xs) = [ for (
+        i=0, sum=0;
+        i <= len(xs);
+        sum = sum + (i < len(xs) ? xs[i] : 0), i = i + 1
+) sum ];
+
+LARGE = 23;
+MEDIUM = 18;
+MINIMUM = 7;
+CAP = 0;
+
+module stack(heights=[MEDIUM, LARGE, MINIMUM, MINIMUM, CAP], diameter=23) {
+    aheights = accumulate(heights);
+
+    // translation to apply to every element
+    base_translation = [0, diameter/2, 0];
+
+    // translation factor for each element to account for the cumulative *height* of previous elements
+    height_factor = [0, 0, 0];
+
+    // translation factor for each element to account for the *number* of previous elements (irrespective of height)
+    count_factor = [0, diameter, 0];
+
+    // add space between the elements
+    padding = [0, 5, 0];
+
+    height_translations = [ for (n = aheights) n * height_factor ];
+    count_translations = [ for (i = range(aheights)) i * count_factor ];
+    padding_translations = [ for (i = range(heights)) i * padding ];
+
+    size = last(height_translations) + last(count_translations) + last(padding_translations);
+    center_translation = -size / 2;
+
+
+    for (i=[0:len(heights)-1]) {
+        texture = i == 2 ? undef : diamonds;
+        colorname = i == 2 ? "orange" : undef;
+        height = heights[i];
+        flipcap = height == 0;
+        start = (
+            base_translation
+            + height_translations[i]
+            + count_translations[i]
+            + padding_translations[i]
+            + center_translation
+        );
+
+        translate(start)
+        rotate([flipcap ? 180 : 0, 0, 0])
+        color(colorname)
+        base(height, texture=texture);
+    }
+}
 
 module all() {
-    diamonds = texture("diamonds");
-
-    xdistribute(30) {
-        rotate([180, 0, 0]) base(0, texture=diamonds);
-        base_keychain(texture=diamonds);
-        base(OUTER_HEIGHT_EMPTY, texture=diamonds);
-        base(OUTER_HEIGHT_EMPTY);
-        base(OUTER_HEIGHT_LARGE, texture=diamonds);
-        base(OUTER_HEIGHT_MEDIUM, texture=diamonds);
-    }
+    stack();
+    translate([-30, 0, 0]) rotate([180, 0, 0]) base_keychain(texture=diamonds);
 }
 
 $fn=$preview ? 20 : 90;
 $slop = 0.2;
-DEBUG_explode = false;
 
 all();
