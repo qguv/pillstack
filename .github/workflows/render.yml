@@ -20,7 +20,9 @@ jobs:
       - name: install openscad
         run: sudo apt-get install -y --no-install-recommends openscad xvfb
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: render 3mf
         run: ninja pillstack.3mf
