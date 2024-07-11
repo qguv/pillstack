@@ -1,18 +1,36 @@
-// animation: fix camera in place
-//$vpr = [$vpr[0], 0, $vpr[2]];
-//$vpt = [0, 0, 0];
-
-// animation: spin
-//$vpr = [$vpr[0], 0, 360 * $t];
-
 include <BOSL2/std.scad>
 include <BOSL2/threading.scad>
 
+/* command-line parameters */
 PNG = !is_undef(PNG);
 
-$vpd = 250;
-
+/* textures */
 diamonds = texture("diamonds");
+
+/* [General] */
+Diameter = 23; // [23:slim, 33:wide, 46:extrawide]
+
+/* [First cup] */
+First_cup_height = 18; // [7:XS, 18:M, 23:L, 25:XL]
+First_cup_smooth = false;
+
+/* [Second cup] */
+Second_cup_height = 23; // [0:none, 7:XS, 18:M, 23:L, 25:XL]
+Second_cup_smooth = false;
+
+/* [Third cup] */
+Third_cup_height = 7; // [0:none, 7:XS, 18:M, 23:L, 25:XL]
+Third_cup_smooth = true;
+
+/* [Fourth cup] */
+Fourth_cup_height = 7; // [0:none, 7:XS, 18:M, 23:L, 25:XL]
+Fourth_cup_smooth = false;
+
+/* [Cap] */
+Cap_smooth = false;
+Cap_keychain = false;
+
+function nonzero_first_elements(xs) = [ for (x=xs) if (x[0] != 0) x ];
 
 // 46d 25h
 module orig_base() {
@@ -367,12 +385,8 @@ function accumulate(xs) = [ for (
         sum = sum + (i < len(xs) ? xs[i] : 0), i = i + 1
 ) sum ];
 
-LARGE = 23;
-MEDIUM = 18;
-MINIMUM = 7;
-CAP = 0;
+module stack(heights, is_smooths, diameter=23) {
 
-module stack(heights=[MEDIUM, LARGE, MINIMUM, MINIMUM, CAP], diameter=23) {
     aheights = accumulate(heights);
 
     // translation to apply to every element
@@ -394,10 +408,9 @@ module stack(heights=[MEDIUM, LARGE, MINIMUM, MINIMUM, CAP], diameter=23) {
     size = last(height_translations) + last(count_translations) + last(padding_translations);
     center_translation = -size / 2;
 
-
     for (i=[0:len(heights)-1]) {
-        texture = i == 2 ? undef : diamonds;
-        colorname = i == 2 ? "orange" : undef;
+        texture = is_smooths[i] ? undef : diamonds;
+        colorname = is_smooths[i] ? "#27f" : undef;
         height = heights[i];
         flipcap = !PNG && height == 0;
         start = (
@@ -411,15 +424,35 @@ module stack(heights=[MEDIUM, LARGE, MINIMUM, MINIMUM, CAP], diameter=23) {
         translate(start)
         rotate([flipcap ? 180 : 0, 0, 0])
         color(colorname)
-        base(height, texture=texture);
+        base(height, diameter, texture=texture);
     }
 }
 
 module all() {
-    stack();
-    translate([-30, 0, 0]) rotate([PNG ? 0 : 180, 0, 0]) base_keychain(texture=diamonds);
+    cups = [
+        [First_cup_height, First_cup_smooth],
+        [Second_cup_height, Second_cup_smooth],
+        [Third_cup_height, Third_cup_smooth],
+        [Fourth_cup_height, Fourth_cup_smooth]
+    ];
+
+    // pull out nonzero heights and corresponding is_smooths
+    heights = [ for (cup=cups) if (cup[0] != 0) cup[0] ];
+    is_smooths = [ for (cup=cups) if (cup[0] != 0) cup[1] ];
+
+    // add cap
+    if (Cap_keychain) {
+        translate([-30, 0, 0]) rotate([PNG ? 0 : 180, 0, 0]) base_keychain(Diameter, texture=diamonds);
+        stack(heights, is_smooths, Diameter);
+
+    } else {
+        heights = concat(heights, [0]);
+        is_smooths = concat(is_smooths, [Cap_smooth]);
+        stack(heights, is_smooths, Diameter);
+    }
 }
 
+$vpd = 250;
 $fn=(PNG || !$preview) ? 90 : 20;
 $slop = 0.2;
 
