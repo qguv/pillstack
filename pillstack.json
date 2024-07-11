@@ -1,0 +1,31 @@
+{
+    "fileFormatVersion": "1",
+    "parameterSets": {
+        "wide": {
+            "Cap_keychain": "false",
+            "Cap_smooth": "false",
+            "Diameter": "33",
+            "First_cup_height": "18",
+            "First_cup_smooth": "false",
+            "Fourth_cup_height": "0",
+            "Fourth_cup_smooth": "false",
+            "Second_cup_height": "18",
+            "Second_cup_smooth": "false",
+            "Third_cup_height": "18",
+            "Third_cup_smooth": "true"
+        },
+        "Mre": {
+            "Cap_keychain": "false",
+            "Cap_smooth": "true",
+            "Diameter": "46",
+            "First_cup_height": "25",
+            "First_cup_smooth": "true",
+            "Fourth_cup_height": "0",
+            "Fourth_cup_smooth": "false",
+            "Second_cup_height": "25",
+            "Second_cup_smooth": "true",
+            "Third_cup_height": "25",
+            "Third_cup_smooth": "true"
+        }
+    }
+}
