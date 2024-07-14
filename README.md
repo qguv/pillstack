@@ -1,5 +1,7 @@
 # pillstack
 
+_also available [on Printables](https://www.printables.com/model/937925-pillstack)_
+
 ![3d render of object](https://qguv.github.io/pillstack/img/pillstack.png)
 
 a from-scratch redesign of https://www.printables.com/model/116168-stackable-supplement-containers in OpenSCAD
