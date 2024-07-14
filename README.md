@@ -4,7 +4,7 @@ _also available [on Printables](https://www.printables.com/model/937925-pillstac
 
 ![3d render of object](https://qguv.github.io/pillstack/img/pillstack.png)
 
-Customizable 3d-printed model for stackable threaded containers. Use for pills, medicine, supplements, or any small parts. 
+Customizable 3d-printable model for stackable threaded containers. Use for pills, medicine, supplements, or any small parts. 
 
 ## inspiration
 
