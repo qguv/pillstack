@@ -4,9 +4,13 @@ _also available [on Printables](https://www.printables.com/model/937925-pillstac
 
 ![3d render of object](https://qguv.github.io/pillstack/img/pillstack.png)
 
-a from-scratch redesign of https://www.printables.com/model/116168-stackable-supplement-containers in OpenSCAD
+Customizable 3d-printed model for stackable threaded containers. Use for pills, medicine, supplements, or any small parts. 
 
-changes from the original:
+## inspiration
+
+This project is an improved from-scratch redesign of https://www.printables.com/model/116168-stackable-supplement-containers in OpenSCAD, so that users can customize the dimensions without compromising the threads.
+
+Changes from the original:
 
 - all dimensions are customizable
 - the default set is much more compact
@@ -16,10 +20,4 @@ changes from the original:
 
 ## building
 
-once you have the submodules (`git submodule update --init`), run `ninja` or `openscad -o pillstack.3mf pillstack.scad`
-
-## animation
-
-some animations are included at the beginning of pillstack.scad. you can uncomment them (one at a time) to view them. from the OpenSCAD GUI, select View → Animate, then set FPS to 30 and Steps to 360
-
-note: this seems to prevent OpenSCAD from automatically updating the preview when the source changes
+Once you have the submodules (`git submodule update --init`), run `ninja` or `openscad -o pillstack.3mf pillstack.scad`
