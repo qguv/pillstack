@@ -5,10 +5,11 @@ include <BOSL2/threading.scad>
 PNG = !is_undef(PNG);
 
 /* textures */
-diamonds = texture("diamonds");
+diamond_tex = texture("diamonds");
 
 /* [General] */
 Diameter = 23; // [23:slim, 33:wide, 46:extrawide]
+Spike_height = 1.5; // step: 0.1
 
 /* [First cup] */
 First_cup_height = 18; // [7:XS, 18:M, 23:L, 25:XL]
@@ -59,7 +60,7 @@ module pips(h, r=22.9, ring_sep=2, n=26) {
 module pip() {
     $fn=6;
     rotate([0, 90, 0])
-    cylinder(h=1.5, r1=0.7, r2=0);
+    cylinder(h=Spike_height, r1=0.7, r2=0);
 }
 
 module pip_orig_base() {
@@ -247,10 +248,11 @@ module base(
     extra_female_mating_height=1,
     extra_outer_wall=0,
     extra_inner_wall=0,
-    texture=undef,
+    texture_name=undef,
     tex_size=[2, 2],
     tex_scale=0.2
 ) {
+    texture = texture_name == "diamond" ? diamond_tex : undef;
     thread_major_diameter = outer_diameter - 2 * wall - 2 * extra_outer_wall;
     inner_height = outer_height - 2 * mating_height - extra_female_mating_height - wall;
     echo("inner height", inner_height);
@@ -260,6 +262,9 @@ module base(
     echo("thread major diameter", thread_major_diameter);
     echo("thread minor diameter", thread_minor_diameter);
     echo("inner diameter", inner_diameter);
+
+    core_height = outer_height - 2 * mating_height - extra_female_mating_height; // includes bottom wall
+    echo("core height", core_height);
 
     if (outer_height > 0) {
         translate([0, 0, outer_height - mating_height])
@@ -271,8 +276,6 @@ module base(
             );
 
         // body
-        core_height = outer_height - 2 * mating_height - extra_female_mating_height; // includes bottom wall
-        echo("core height", core_height);
         cupje(
             d=outer_diameter,
             d_inner=inner_diameter,
@@ -294,6 +297,13 @@ module base(
                 anchor=BOTTOM
             );
         }
+    }
+
+    if (texture_name == "spiked") {
+        translate([0, 0, 1]) pips(
+            core_height + mating_height + extra_female_mating_height,
+            r=outer_diameter/2
+        );
     }
 
     base_female_threads(
@@ -353,7 +363,7 @@ module base_keychain(
     mating_height=2.5,
     wall=1,
     extra_female_mating_height=1,
-    texture=undef,
+    texture_name=undef,
     tex_size=[2, 2],
     tex_scale=0.2
 ) {
@@ -371,7 +381,7 @@ module base_keychain(
 
     base(
         0,
-        texture=texture,
+        texture_name=texture_name,
         tex_size=tex_size,
         tex_scale=tex_scale
     );
@@ -409,7 +419,6 @@ module stack(heights, texture_names, diameter=23) {
     center_translation = -size / 2;
 
     for (i=[0:len(heights)-1]) {
-        texture = texture_names[i] == "diamond" ? diamonds : undef;
         colorname = texture_names[i] == "smooth" ? "#27f" : undef;
         height = heights[i];
         flipcap = !PNG && height == 0;
@@ -424,7 +433,7 @@ module stack(heights, texture_names, diameter=23) {
         translate(start)
         rotate([flipcap ? 180 : 0, 0, 0])
         color(colorname)
-        base(height, diameter, texture=texture);
+        base(height, diameter, texture_name=texture_names[i]);
     }
 }
 
@@ -442,7 +451,7 @@ module all() {
 
     // add cap
     if (Cap_keychain) {
-        translate([-30, 0, 0]) rotate([PNG ? 0 : 180, 0, 0]) base_keychain(Diameter, texture=diamonds);
+        translate([-30, 0, 0]) rotate([PNG ? 0 : 180, 0, 0]) base_keychain(Diameter, texture_name="diamond");
         stack(heights, texture_names, Diameter);
 
     } else {
