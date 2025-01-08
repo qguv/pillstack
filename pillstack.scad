@@ -12,23 +12,23 @@ Diameter = 23; // [23:slim, 33:wide, 46:extrawide]
 
 /* [First cup] */
 First_cup_height = 18; // [7:XS, 18:M, 23:L, 25:XL]
-First_cup_smooth = false;
+First_cup_texture = "diamond"; // [diamond, smooth, spiked]
 
 /* [Second cup] */
 Second_cup_height = 23; // [0:none, 7:XS, 18:M, 23:L, 25:XL]
-Second_cup_smooth = false;
+Second_cup_texture = "diamond"; // [diamond, smooth, spiked]
 
 /* [Third cup] */
 Third_cup_height = 7; // [0:none, 7:XS, 18:M, 23:L, 25:XL]
-Third_cup_smooth = true;
+Third_cup_texture = "smooth"; // [diamond, smooth, spiked]
 
 /* [Fourth cup] */
 Fourth_cup_height = 7; // [0:none, 7:XS, 18:M, 23:L, 25:XL]
-Fourth_cup_smooth = false;
+Fourth_cup_texture = "diamond"; // [diamond, smooth, spiked]
 
 /* [Cap] */
-Cap_smooth = false;
 Cap_keychain = false;
+Cap_texture = "diamond"; // [diamond, smooth, spikes]
 
 function nonzero_first_elements(xs) = [ for (x=xs) if (x[0] != 0) x ];
 
@@ -385,7 +385,7 @@ function accumulate(xs) = [ for (
         sum = sum + (i < len(xs) ? xs[i] : 0), i = i + 1
 ) sum ];
 
-module stack(heights, is_smooths, diameter=23) {
+module stack(heights, texture_names, diameter=23) {
 
     aheights = accumulate(heights);
 
@@ -409,8 +409,8 @@ module stack(heights, is_smooths, diameter=23) {
     center_translation = -size / 2;
 
     for (i=[0:len(heights)-1]) {
-        texture = is_smooths[i] ? undef : diamonds;
-        colorname = is_smooths[i] ? "#27f" : undef;
+        texture = texture_names[i] == "diamond" ? diamonds : undef;
+        colorname = texture_names[i] == "smooth" ? "#27f" : undef;
         height = heights[i];
         flipcap = !PNG && height == 0;
         start = (
@@ -430,25 +430,25 @@ module stack(heights, is_smooths, diameter=23) {
 
 module all() {
     cups = [
-        [First_cup_height, First_cup_smooth],
-        [Second_cup_height, Second_cup_smooth],
-        [Third_cup_height, Third_cup_smooth],
-        [Fourth_cup_height, Fourth_cup_smooth]
+        [First_cup_height, First_cup_texture],
+        [Second_cup_height, Second_cup_texture],
+        [Third_cup_height, Third_cup_texture],
+        [Fourth_cup_height, Fourth_cup_texture]
     ];
 
-    // pull out nonzero heights and corresponding is_smooths
+    // pull out nonzero heights and corresponding texture names
     heights = [ for (cup=cups) if (cup[0] != 0) cup[0] ];
-    is_smooths = [ for (cup=cups) if (cup[0] != 0) cup[1] ];
+    texture_names = [ for (cup=cups) if (cup[0] != 0) cup[1] ];
 
     // add cap
     if (Cap_keychain) {
         translate([-30, 0, 0]) rotate([PNG ? 0 : 180, 0, 0]) base_keychain(Diameter, texture=diamonds);
-        stack(heights, is_smooths, Diameter);
+        stack(heights, texture_names, Diameter);
 
     } else {
         heights = concat(heights, [0]);
-        is_smooths = concat(is_smooths, [Cap_smooth]);
-        stack(heights, is_smooths, Diameter);
+        texture_names = concat(texture_names, [Cap_texture]);
+        stack(heights, texture_names, Diameter);
     }
 }
 
