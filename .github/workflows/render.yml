@@ -31,7 +31,7 @@ jobs:
         run: mv pillstack.3mf pillstack_${{ github.sha }}.3mf
 
       - name: upload 3mf
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: pillstack_${{ github.sha }}.3mf
           path: pillstack_${{ github.sha }}.3mf
@@ -43,7 +43,7 @@ jobs:
         run: mv pillstack.stl pillstack_${{ github.sha }}.stl
 
       - name: upload stl
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: pillstack_${{ github.sha }}.stl
           path: pillstack_${{ github.sha }}.stl
@@ -57,7 +57,7 @@ jobs:
         run: mv pillstack.png pillstack_${{ github.sha }}.png
 
       - name: upload png
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: pillstack_${{ github.sha }}.png
           path: pillstack_${{ github.sha }}.png
