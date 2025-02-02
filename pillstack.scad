@@ -29,7 +29,7 @@ Fourth_cup_texture = "diamond"; // [diamond, smooth, spiked]
 
 /* [Cap] */
 Cap_keychain = false;
-Cap_texture = "diamond"; // [diamond, smooth, spikes]
+Cap_texture = "diamond"; // [diamond, smooth, spiked]
 
 function nonzero_first_elements(xs) = [ for (x=xs) if (x[0] != 0) x ];
 
@@ -45,7 +45,7 @@ module orig_cap() {
     import("lib/cap.stl");
 }
 
-module pips(h, r=22.9, ring_sep=2, n=26) {
+module pips(h, r=22.9, ring_sep=1.75, n=26) {
     rings = floor(h / ring_sep);
     for (j = [0:rings-1]) {
         for (i = [0:n-1]) {
@@ -301,7 +301,7 @@ module base(
 
     if (texture_name == "spiked") {
         translate([0, 0, 1]) pips(
-            core_height + mating_height + extra_female_mating_height,
+            max(core_height, 0) + mating_height + extra_female_mating_height,
             r=outer_diameter/2 - (wall / 4)
         );
     }
