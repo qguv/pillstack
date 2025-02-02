@@ -302,7 +302,7 @@ module base(
     if (texture_name == "spiked") {
         translate([0, 0, 1]) pips(
             core_height + mating_height + extra_female_mating_height,
-            r=outer_diameter/2
+            r=outer_diameter/2 - (wall / 4)
         );
     }
 
